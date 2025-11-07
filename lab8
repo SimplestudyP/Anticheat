@@ -1,0 +1,56 @@
+# CRC Error Detection
+
+def xor(a, b):
+    # XOR operation between two binary strings
+    result = ""
+    for i in range(1, len(b)):
+        result += '0' if a[i] == b[i] else '1'
+    return result
+
+
+def crc_division(dividend, divisor):
+    pick = len(divisor)
+    tmp = dividend[0:pick]
+
+    while pick < len(dividend):
+        if tmp[0] == '1':
+            tmp = xor(divisor, tmp) + dividend[pick]
+        else:
+            tmp = xor('0'*pick, tmp) + dividend[pick]
+        pick += 1
+
+    # Final step for remaining bits
+    if tmp[0] == '1':
+        tmp = xor(divisor, tmp)
+    else:
+        tmp = xor('0'*pick, tmp)
+
+    remainder = tmp
+    return remainder
+
+
+# ---- MAIN ----
+data = input("Enter data bits: ")
+divisor = input("Enter generator (polynomial): ")
+
+# Append zeros to data (degree of divisor - 1)
+l_key = len(divisor)
+appended_data = data + '0'*(l_key - 1)
+print("\nAppended Data:", appended_data)
+
+# Get CRC remainder
+remainder = crc_division(appended_data, divisor)
+print("Remainder (CRC bits):", remainder)
+
+# Transmitted codeword = data + CRC
+codeword = data + remainder
+print("Transmitted Codeword:", codeword)
+
+# Receiver side verification
+received = input("\nEnter received codeword: ")
+recheck = crc_division(received, divisor)
+
+if "1" in recheck:
+    print("Error detected ❌")
+else:
+    print("No error detected ✅")
