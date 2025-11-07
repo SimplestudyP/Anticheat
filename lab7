@@ -1,0 +1,64 @@
+# 1D Parity Check (Even Parity)
+
+data = input("Enter the binary data: ")
+
+# Count number of 1s
+ones = data.count('1')
+
+# Generate parity bit (even parity)
+if ones % 2 == 0:
+    parity_bit = '0'
+else:
+    parity_bit = '1'
+
+# Add parity bit to data
+transmitted = data + parity_bit
+print("Data to be transmitted:", transmitted)
+
+# ----- Receiver Side -----
+received = input("Enter received data: ")
+ones = received.count('1')
+
+if ones % 2 == 0:
+    print("No error detected ✅")
+else:
+    print("Error detected ❌")
+
+
+
+# 2D Parity Check (Even Parity)
+
+rows = int(input("Enter number of rows: "))
+cols = int(input("Enter number of columns: "))
+
+# Input data bits
+data = []
+print("Enter the data bits row by row:")
+for i in range(rows):
+    row = input()
+    data.append(row)
+
+# Generate row parity
+row_parity = []
+for row in data:
+    if row.count('1') % 2 == 0:
+        row_parity.append(row + '0')
+    else:
+        row_parity.append(row + '1')
+
+# Generate column parity
+col_parity = ""
+for c in range(cols + 1):
+    count = sum(1 for row in row_parity if row[c] == '1')
+    if count % 2 == 0:
+        col_parity += '0'
+    else:
+        col_parity += '1'
+
+# Add column parity as last row
+row_parity.append(col_parity)
+
+print("\nData with 2D parity bits:")
+for row in row_parity:
+    print(row)
+
