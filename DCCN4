@@ -1,0 +1,95 @@
+# Bit Stuffing
+
+data = input("Enter bit stream: ")
+
+count = 0
+stuffed = ""
+
+for bit in data:
+    stuffed += bit
+    if bit == '1':
+        count += 1
+        if count == 5:   # after 5 consecutive 1s
+            stuffed += '0'  # stuff a 0
+            count = 0
+    else:
+        count = 0
+
+print("Stuffed bit stream:", stuffed)
+
+
+
+
+# Byte Stuffing
+
+data = input("Enter data: ")
+
+flag = 'F'
+esc = 'E'
+stuffed = ""
+
+for ch in data:
+    if ch == flag or ch == esc:
+        stuffed += esc  # add escape before flag or escape
+    stuffed += ch
+
+stuffed = flag + stuffed + flag
+
+print("Stuffed data:", stuffed)
+
+
+
+
+# Bit De-stuffing (Correct Version)
+
+data = input("Enter stuffed bit stream: ")
+
+destuffed = ""
+count = 0
+i = 0
+
+while i < len(data):
+    bit = data[i]
+    destuffed += bit
+
+    if bit == '1':
+        count += 1
+        if count == 5:
+            # Skip the next bit (stuffed 0)
+            i += 1
+            count = 0
+    else:
+        count = 0
+
+    i += 1
+
+print("De-stuffed bit stream:", destuffed)
+
+
+
+# Byte De-stuffing (Fixed & Simplified)
+
+data = input("Enter stuffed data: ")
+
+flag = 'F'
+esc  = 'E'
+destuffed = ""
+i = 0
+
+# If data starts and ends with FLAG, remove them safely
+if len(data) >= 2 and data[0] == flag and data[-1] == flag:
+    data = data[1:-1]
+
+while i < len(data):
+    if data[i] == esc:
+        # Skip this ESC and take next byte as normal
+        if i + 1 < len(data):
+            destuffed += data[i + 1]
+        i += 2
+    else:
+        destuffed += data[i]
+        i += 1
+
+print("De-stuffed Data:", destuffed)
+
+
